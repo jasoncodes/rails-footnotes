@@ -19,5 +19,20 @@ if ENABLE_RAILS_FOOTNOTES
   class ActionController::Base
     prepend_before_filter Footnotes::Filter
     after_filter Footnotes::Filter
+
+    # prefer our own rescue views when available
+    def rescue_action_locally(exception)
+      class << RESCUES_TEMPLATE_PATH
+        def [](path)
+          footnotes_views_path = File.join(File.dirname(__FILE__), 'rails-footnotes/views')
+          if File.exists? File.join(footnotes_views_path, path)
+            ActionView::Template::EagerPath.new_and_loaded(footnotes_views_path)[path]
+          else
+            super
+          end
+        end
+      end
+      super
+    end
   end
 end
