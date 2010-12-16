@@ -20,11 +20,7 @@
 
   <% traces.each do |name, trace| %>
     <div id="<%= name.gsub /\s/, '-' %>" style="display: <%= name == "Application Trace" ? 'block' : 'none' %>;">
-      <%
-      # original code from Rails 2.3.6+:
-      # <pre><code><%=h trace.join "\n" %></code></pre>
-      %>
-      <pre><code><%= raw trace.join "<br />\n" %></code></pre>
+      <pre><code><%=h trace.join "\n" %></code></pre>
     </div>
   <% end %>
 </div>
