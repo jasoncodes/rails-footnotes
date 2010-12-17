@@ -215,7 +215,7 @@ module Footnotes
                 hideAll();
                 toggle(id)
 
-                location.href = '#footnotes_debug';
+                window.scrollTo(0, document.body.scrollHeight);
               }  
               
               function toggle(id){
