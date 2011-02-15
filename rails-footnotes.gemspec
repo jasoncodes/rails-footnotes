@@ -21,4 +21,3 @@ Gem::Specification.new do |s|
   s.extra_rdoc_files = ["README"]
   s.rdoc_options     = ["--charset=UTF-8"]
 end
-
