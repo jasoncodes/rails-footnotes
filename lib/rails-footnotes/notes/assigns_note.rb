@@ -4,18 +4,28 @@ module Footnotes
   module Notes
     class AssignsNote < AbstractNote
       @@ignored_assigns = [
-                            :@real_format,
+                            :@action_has_layout,
                             :@before_filter_chain_aborted,
+                            :@db_rt_after_render,
+                            :@db_rt_before_render,
+                            :@devise_mapping,
+                            :@lookup_context,
                             :@performed_redirect,
                             :@performed_render,
-                            :@_params,
-                            :@_response,
-                            :@url,
+                            :@real_format,
                             :@template,
+                            :@url,
+                            :@view_context_class,
+                            :@_action_name,
+                            :@_config,
+                            :@_db_runtime,
+                            :@_env,
+                            :@_params,
                             :@_request,
-                            :@db_rt_before_render,
-                            :@db_rt_after_render,
-                            :@view_runtime
+                            :@_response,
+                            :@_response_body,
+                            :@_status,
+                            :@_view_runtime,
                           ]
       cattr_accessor :ignored_assigns, :instance_writter => false
 
@@ -44,11 +54,11 @@ module Footnotes
         def assigns
           assign = []
           ignored = @@ignored_assigns
-          
+
           @controller.instance_variables.each {|x| assign << x.intern }
           @controller.protected_instance_variables.each {|x| ignored << x.intern } if @controller.respond_to? :protected_instance_variables
-           
-          assign -= ignored            
+
+          assign -= ignored
           return assign
         end
 
