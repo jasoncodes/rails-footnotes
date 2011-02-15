@@ -219,14 +219,14 @@ module Footnotes
               function hideAll(){
                 #{close unless @@multiple_notes}
               }
-              
+
               function hideAllAndToggle(id) {
                 hideAll();
                 toggle(id)
 
                 location.href = '#footnotes_debug';
-              }  
-              
+              }
+
               function toggle(id){
                 var el = document.getElementById(id);
                 if (el.style.display == 'none') {
@@ -235,11 +235,11 @@ module Footnotes
                   Footnotes.hide(el);
                 }
               }
-            
+
               function show(element) {
                 element.style.display = 'block'
               }
-            
+
               function hide(element) {
                 element.style.display = 'none'
               }
@@ -356,7 +356,7 @@ module Footnotes
       end
 
       # Instance each_with_rescue method
-      # 
+      #
       def each_with_rescue(*args, &block)
         self.class.each_with_rescue(*args, &block)
       end
