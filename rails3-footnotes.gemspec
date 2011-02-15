@@ -18,6 +18,5 @@ Gem::Specification.new do |s|
   s.test_files    = Dir["test/**/*.rb"]
   s.require_paths = ["lib"]
 
-  s.extra_rdoc_files = ["README"]
   s.rdoc_options     = ["--charset=UTF-8"]
 end
