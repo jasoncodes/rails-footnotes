@@ -1,5 +1,5 @@
-# Rails Footnotes
-#### Version 4.0.0.pre (The Rails 3 Edition™)
+# Rails 3 Footnotes
+#### Version 4.0.0.pre
 #### MIT License
 
 ## Rails 3

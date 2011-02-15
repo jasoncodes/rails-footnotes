@@ -1,3 +1,6 @@
+== Footnotes v4.0.0.pre
+  * works with Rails 3 (mostly thanks to mperham)
+
 == Footnotes v3.6.7
   * fixed log_note error - long overdue (thanks to many including Moritz Heidkamp)
   * 1.9: ignore more assigns (thanks to justin case)
