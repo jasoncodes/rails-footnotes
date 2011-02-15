@@ -1,15 +1,15 @@
 # -*- encoding: utf-8 -*-
 Gem::Specification.new do |s|
   s.name        = %q{rails-footnotes}
-  s.version     = "3.6.7"
+  s.version     = "4.0.0.pre"
   s.date        = %q{2010-08-17}
 
-  s.authors     = ["Keenan Brock"]
-  s.email       = %q{keenan@thebrocks.net}
-  s.homepage    = %q{http://github.com/josevalim/rails-footnotes}
+  s.authors     = ["André Arko", "Roman Babenko", "José Valim", "Keenan Brock"]
+  s.email       = %q{andre@arko.net}
+  s.homepage    = %q{http://github.com/indirect/rails-footnotes}
 
-  s.description = %q{Every Rails page has footnotes that gives information about your application and links back to your editor.}
-  s.summary     = %q{Every Rails page has footnotes that gives information about your application and links back to your editor.}
+  s.summary     = %q{Footnotes for Rails pages in development}
+  s.description = %q{Adds footnotes to each page in your Rails app, containing useful development information as well as links to edit the controllers and views in your editor.}
 
   s.rubyforge_project = %q{rails-footnotes}
   s.rubygems_version  = %q{1.3.6}
