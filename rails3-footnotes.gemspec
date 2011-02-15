@@ -1,7 +1,9 @@
 # -*- encoding: utf-8 -*-
+require File.expand_path('../lib/rails-footnotes/version', __FILE__)
+
 Gem::Specification.new do |s|
   s.name        = %q{rails3-footnotes}
-  s.version     = "4.0.0.pre"
+  s.version     = Footnotes::VERSION
   s.date        = %q{2011-02-14}
 
   s.authors     = ["André Arko"]
