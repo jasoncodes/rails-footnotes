@@ -1,10 +1,10 @@
 # -*- encoding: utf-8 -*-
 Gem::Specification.new do |s|
-  s.name        = %q{rails-footnotes}
+  s.name        = %q{rails3-footnotes}
   s.version     = "4.0.0.pre"
-  s.date        = %q{2010-08-17}
+  s.date        = %q{2011-02-14}
 
-  s.authors     = ["André Arko", "Roman Babenko", "José Valim", "Keenan Brock"]
+  s.authors     = ["André Arko"]
   s.email       = %q{andre@arko.net}
   s.homepage    = %q{http://github.com/indirect/rails-footnotes}
 
