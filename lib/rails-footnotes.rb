@@ -1,22 +1,19 @@
 module Footnotes
 
-  # The footnotes are applied by default to all actions. You can change this
-  # behavior commenting the after_filter line below and putting it in Your
-  # application. Then you can cherrypick in which actions it will appear.
-  #
-  module RailsFootnotesExtension
-    def self.included(base)
-      base.prepend_before_filter Footnotes::BeforeFilter
-      base.after_filter Footnotes::AfterFilter
+  # The footnotes are applied by default to all actions. To remove the
+  # footnotes from an action, use skip_filter in your controller.
+  class Railtie < ::Rails::Railtie
+    config.before_configuration do
+      require 'rails-footnotes/footnotes'
+      require 'rails-footnotes/backtracer'
+
+      # Require each individual note
+      notes_glob = File.expand_path("../rails-footnotes/notes/*.rb", __FILE__)
+      Dir[notes_glob].each{|note| require note }
+
+      ActionController::Base.prepend_before_filter Footnotes::BeforeFilter
+      ActionController::Base.after_filter Footnotes::AfterFilter
     end
   end
 
-  def self.run!
-    require 'rails-footnotes/footnotes'
-    require 'rails-footnotes/backtracer'
-
-    Dir[File.join(File.dirname(__FILE__), 'rails-footnotes', 'notes', '*.rb')].each { |note| require note }
-
-    ActionController::Base.send(:include, RailsFootnotesExtension)
-  end
 end
