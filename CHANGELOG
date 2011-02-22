@@ -1,7 +1,12 @@
-== Footnotes v4.0.0.pre.1
+== Footnotes v4.0.0.pre.2 (February 21, 2011)
+  * add a Railtie so the plugin will load in Rails 3 apps
+  * remove some internal rails3 ivars from the assigns note
+  * convert CSS to ems, px are sooo 2000's
+
+== Footnotes v4.0.0.pre.1 (February 14, 2011)
   * escapes TextMate links correctly (thanks reedlaw)
 
-== Footnotes v4.0.0.pre
+== Footnotes v4.0.0.pre (February 14, 2011)
   * works with Rails 3 (mostly thanks to mperham)
 
 == Footnotes v3.6.7
