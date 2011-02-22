@@ -20,15 +20,15 @@ module Footnotes
         prefix? && first_render?
       end
 
-      protected
+    protected
 
-        def first_render?
-          @template.instance_variable_get(:@_first_render)
-        end
+      def first_render?
+        @template.instance_variable_get(:@_first_render)
+      end
 
-        def filename
-          @filename ||= @template.instance_variable_get(:@_first_render).filename
-        end
+      def filename
+        @filename ||= @template.instance_variable_get(:@_first_render).filename
+      end
 
     end
   end
