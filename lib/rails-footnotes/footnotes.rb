@@ -221,9 +221,11 @@ module Footnotes
               }
 
               function hideAllAndToggle(id) {
+                var el = document.getElementById(id);
+                var show = el.style.display == 'none';
                 hideAll();
-                toggle(id)
 
+                if (show) el.style.display = 'block';
                 window.scrollTo(0, document.body.scrollHeight);
               }
 
