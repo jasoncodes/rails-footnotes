@@ -5,7 +5,10 @@ module Footnotes
     class ViewNote < AbstractNote
       def initialize(controller)
         @controller = controller
-        @template = controller.instance_variable_get(:@template)
+      end
+
+      ActiveSupport::Notifications.subscribe("render_template.action_view") do |name, start, finish, id, payload|
+        class_variable_set :@@view_path, payload[:identifier]
       end
 
       def row
@@ -17,17 +20,13 @@ module Footnotes
       end
 
       def valid?
-        prefix? && first_render?
+        !!@@view_path
       end
 
     protected
 
-      def first_render?
-        @template.instance_variable_get(:@_first_render)
-      end
-
       def filename
-        @filename ||= @template.instance_variable_get(:@_first_render).filename
+        @@view_path
       end
 
     end
