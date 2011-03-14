@@ -7,6 +7,10 @@ module Footnotes
         @controller = controller
       end
 
+      ActiveSupport::Notifications.subscribe("render_template.action_view") do |name, start, finish, id, payload|
+        class_variable_set :@@layout_path, payload[:layout]
+      end
+
       def row
         :edit
       end
@@ -16,12 +20,12 @@ module Footnotes
       end
 
       def valid?
-        prefix? && nil#@controller.active_layout TODO doesn't work with Rails 3
+        !!@@layout_path
       end
 
       protected
         def filename
-          File.join(File.expand_path(Rails.root), 'app', 'layouts', "#{@controller.active_layout.to_s.underscore}").sub('/layouts/layouts/', '/views/layouts/')
+          @@layout_path && @controller.find_template(@@layout_path).identifier
         end
     end
   end
