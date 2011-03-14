@@ -1,56 +1,52 @@
-require "#{File.dirname(__FILE__)}/log_note"
+require "#{File.dirname(__FILE__)}/abstract_note"
 
 module Footnotes
   module Notes
-    class PartialsNote < LogNote
+    class PartialsNote < AbstractNote
+      attr_reader :partials
+
       def initialize(controller)
-        super
         @controller = controller
+        @partials = self.class.partials.dup
+        self.class.partials.clear
       end
+
+      notification_proc = lambda { |name, start, finish, id, payload|
+        key = payload[:identifier]
+        partials[key] ||= { :time => 0, :count => 0}
+        partials[key][:time] += finish - start
+        partials[key][:count] += payload[:count] || 1
+      }
+      %w(render_partial.action_view render_collection.action_view).each do |name|
+        ActiveSupport::Notifications.subscribe name, notification_proc
+      end
+
       def row
         :edit
       end
+
       def title
         "Partials (#{partials.size})"
       end
+
       def content
-        rows = partials.map do |filename|
+        rows = partials.map do |filename, data|
           href = Footnotes::Filter.prefix(filename,1,1)
           shortened_name=filename.gsub(File.join(Rails.root,"app/views/"),"")
-          [%{<a href="#{href}">#{shortened_name}</a>},"#{@partial_times[filename].sum}ms",@partial_counts[filename]]
+          [
+            %{<a href="#{href}">#{shortened_name}</a>},
+            "#{@controller.view_context.number_with_precision data[:time]*1000, :precision => 1, :delimiter => ','}ms",
+            @controller.view_context.number_with_delimiter(data[:count])
+          ]
         end
-        mount_table(rows.unshift(%w(Partial Time Count)), :summary => "Partials for #{title}")
+        mount_table(rows.unshift(%w(Partial Time Count)), :summary => title)
       end
 
       protected
-        #Generate a list of partials that were rendered, also build up render times and counts.
-        #This is memoized so we can use its information in the title easily.
-        def partials
-          @partials ||= begin
-            partials = []
-            @partial_counts = {}
-            @partial_times = {}
-            log_lines = log
-            log_lines.split("\n").each do |line|
-              if line =~ /Rendered (\S*) \(([\d\.]+)\S*?\)/
-                partial = $1
-                @controller.view_paths.each do |view_path|
-                  path = File.join(view_path, "#{partial}*")
-                  files = Dir.glob(path)
-                  for file in files
-                    #TODO figure out what format got rendered if theres multiple
-                    @partial_times[file] ||= []
-                    @partial_times[file] << $2.to_f
-                    @partial_counts[file] ||= 0
-                    @partial_counts[file] += 1
-                    partials << file unless partials.include?(file)
-                  end
-                end
-              end
-            end
-            partials.reverse
-          end
-        end
-    end    
+
+      def self.partials
+        @partials ||= {}
+      end
+    end
   end
 end
