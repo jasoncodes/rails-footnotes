@@ -42,6 +42,14 @@ module Footnotes
         mount_table(rows.unshift(%w(Partial Time Count)), :summary => title)
       end
 
+      def stylesheet
+        """
+        #partials_debug_info table tr :not(:first-child) {
+          text-align: right;
+        }
+        """
+      end
+
       protected
 
       def self.partials
