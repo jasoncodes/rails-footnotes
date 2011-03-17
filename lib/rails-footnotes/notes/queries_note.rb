@@ -132,9 +132,13 @@ module Footnotes
           @query = query
           @explain = explain
 
-          # Strip, select those ones from app and reject first two, because they
-          # are from the plugin
-          @trace = Kernel.caller.collect(&:strip).select{|i| i.gsub!(/^#{Rails.root}\//im, '') }[2..-1]
+          @trace = Kernel.caller.collect(&:strip).select do |line|
+            # select source files which are within the app directory
+            line.gsub!(/^#{Regexp.escape Rails.root.to_s}\//im, '')
+          end.map do |line|
+            # strip automatically generated Haml method name
+            line.gsub(/(.haml:\d+):in `_app_views_.*'$/, '\1')
+          end
         end
       end
 
