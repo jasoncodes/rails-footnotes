@@ -6,15 +6,22 @@ module Footnotes
       @@alert_db_time = 0.16
       @@alert_sql_number = 8
       @@sql = []
-      @@include_when_new_relic_installed = false
-      @@loaded = false
       
       cattr_accessor :sql, :alert_db_time, :alert_sql_number, :alert_explain, :loaded, :sql_explain, :instance_writter => false
-      cattr_reader :include_when_new_relic_installed
       
-      def self.include_when_new_relic_installed=(include_me)
-        @@include_when_new_relic_installed = include_me
-        load if include_me
+      ActiveSupport::Notifications.subscribe("sql.active_record") do |name, start, finish, id, payload|
+        if payload[:sql] =~ /^(select|create|update|delete)\b/i
+          type = $&.downcase.to_sym
+          explain = nil
+
+          if type == :select && Footnotes::Notes::QueriesNote.sql_explain
+            log_silence do
+              explain = ActiveRecord::Base.connection.execute("EXPLAIN #{query}", name)
+            end
+          end
+
+          Footnotes::Notes::QueriesNote.sql << Footnotes::Notes::QueriesNote::Sql.new(type, payload[:name], finish-start, payload[:sql], explain)
+        end
       end
       
       def self.start!(controller)
@@ -66,16 +73,7 @@ module Footnotes
       end
       
       def self.load
-        #only include when NewRelic is installed if configured to do so
-        if !loaded and included? and defined?(ActiveRecord)
-          ActiveRecord::ConnectionAdapters::AbstractAdapter.send :include, Footnotes::Extensions::AbstractAdapter
-          ActiveRecord::ConnectionAdapters.local_constants.each do |adapter|
-            next unless adapter =~ /.*[^Abstract]Adapter$/
-            next if adapter =~ /(SQLite|Salesforce)Adapter$/
-            eval("ActiveRecord::ConnectionAdapters::#{adapter}").send :include, Footnotes::Extensions::QueryAnalyzer
-            self.loaded = true
-          end
-        end
+        ActiveRecord::ConnectionAdapters::AbstractAdapter.send :include, Footnotes::Extensions::AbstractAdapter
       end
       
       protected
@@ -120,53 +118,26 @@ module Footnotes
           alert_db_time / alert_sql_number
         end
 
+      class Sql
+        attr_accessor :type, :name, :time, :query, :explain, :trace
+
+        def initialize(type, name, time, query, explain)
+          @type = type
+          @name = name
+          @time = time
+          @query = query
+          @explain = explain
+
+          # Strip, select those ones from app and reject first two, because they
+          # are from the plugin
+          @trace = Kernel.caller.collect(&:strip).select{|i| i.gsub!(/^#{Rails.root}\//im, '') }[2..-1]
+        end
+      end
+
     end
   end
-
+  
   module Extensions
-    class Sql
-      attr_accessor :type, :name, :time, :query, :explain, :trace
-
-      def initialize(type, name, time, query, explain)
-        @type = type
-        @name = name
-        @time = time
-        @query = query
-        @explain = explain
-
-        # Strip, select those ones from app and reject first two, because they
-        # are from the plugin
-        @trace = Kernel.caller.collect(&:strip).select{|i| i.gsub!(/^#{Rails.root}\//im, '') }[2..-1]
-      end
-    end
-
-    module QueryAnalyzer
-      def self.included(base)
-        base.class_eval do
-          alias_method_chain :execute, :analyzer
-        end
-      end
-
-      def execute_with_analyzer(query, name = nil)
-        query_results = nil
-        time = Benchmark.realtime { query_results = execute_without_analyzer(query, name) }
-
-        if query =~ /^(select|create|update|delete)\b/i
-          type = $&.downcase.to_sym
-          explain = nil
-
-          if adapter_name == 'MySQL' && type == :select && Footnotes::Notes::QueriesNote.sql_explain
-            log_silence do
-              explain = execute_without_analyzer("EXPLAIN #{query}", name)
-            end
-          end
-          Footnotes::Notes::QueriesNote.sql << Footnotes::Extensions::Sql.new(type, name, time, query, explain)
-        end
-
-        query_results
-      end
-    end
-
     module AbstractAdapter
       def log_silence
         result = nil
