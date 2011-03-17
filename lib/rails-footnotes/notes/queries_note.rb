@@ -9,6 +9,10 @@ module Footnotes
       
       cattr_accessor :sql, :alert_db_time, :alert_sql_number, :alert_explain, :loaded, :sql_explain, :instance_writter => false
       
+      def initialize(controller)
+        @controller = controller
+      end
+
       ActiveSupport::Notifications.subscribe("sql.active_record") do |name, start, finish, id, payload|
         if payload[:sql] =~ /^(select|create|update|delete)\b/i
           type = $&.downcase.to_sym
@@ -39,7 +43,7 @@ module Footnotes
 
         <<-TITLE
   <span style="background-color:#{query_color}">Queries (#{@@sql.length})</span> 
-  <span style="background-color:#{db_color}">DB (#{"%.6f" % db_time}s)</span>
+  <span style="background-color:#{db_color}">DB (#{@controller.view_context.number_with_precision db_time*1000, :precision => 1, :delimiter => ','}ms)</span>
         TITLE
       end
 
@@ -94,7 +98,7 @@ module Footnotes
         end
 
         def print_name_and_time(name, time)
-          "<span style='background-color:#{generate_red_color(time, alert_ratio)}'>#{escape(name || 'SQL')} (#{sprintf('%f', time)}s)</span>"
+          "<span style='background-color:#{generate_red_color(time, alert_ratio)}'>#{escape(name || 'SQL')} (#{@controller.view_context.number_with_precision time*1000, :precision => 1, :delimiter => ','}ms)</span>"
         end
 
         def print_query(query)
