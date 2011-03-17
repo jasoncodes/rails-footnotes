@@ -19,7 +19,7 @@ Even more, it contains links to open files directly in your editor including you
 
 In your Gemfile:
 
-    gem 'rails-footnotes', :git => 'git://github.com/indirect/rails-footnotes.git'
+    gem 'rails3-footnotes', :git => 'git://github.com/jasoncodes/rails-footnotes.git'
 
 ## Configuration
 
