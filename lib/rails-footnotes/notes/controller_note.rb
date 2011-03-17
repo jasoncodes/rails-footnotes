@@ -38,7 +38,7 @@ module Footnotes
           else
             @controller_filename=File.join(File.expand_path(Rails.root), 'app', 'controllers', "#{controller_name}.rb").sub('/controllers/controllers/', '/controllers/')
           end
-          @controller_filename
+          @controller_filename if File.exist?(@controller_filename)
         end
 
         def controller_text
