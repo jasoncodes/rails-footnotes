@@ -137,7 +137,7 @@ module Footnotes
             line.gsub!(/^#{Regexp.escape Rails.root.to_s}\//im, '')
           end.map do |line|
             # strip automatically generated Haml method name
-            line.gsub(/(.haml:\d+):in `_app_views_.*'$/, '\1')
+            line.gsub(/(.haml:\d+):in .*$/, '\1')
           end
         end
       end
