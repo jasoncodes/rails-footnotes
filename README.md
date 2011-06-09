@@ -23,15 +23,7 @@ In your Gemfile:
 
 ## Configuration
 
-By default, footnotes will only be activated when your Rails app is in development mode. If you want to add alternate logic to enable or disable footnotes, add something like this to config/initializers/footnotes.rb:
-
-    if defined?(Footnotes) & Rails.env.development?
-      Footnotes.run! # first of all
-
-      # ... other init code
-    end
-
-If you are using MacVim as your editor, add this line to your initializer:
+If you are using MacVim as your editor, add this line to an initializer:
 
     Footnotes::Filter.prefix = 'mvim://open?url=file://%s&amp;line=%d&amp;column=%d'
 
@@ -56,7 +48,7 @@ If you have New Relic RPM installed, you may want to turn off query explains
 
 Finally, you can control which notes you want to show. The default are:
 
-    Footnotes::Filter.notes = [:session, :cookies, :params, :filters, :routes, :env, :queries, :log, :general]
+    Footnotes::Filter.notes = [:controller, :view, :layout, :partials, :stylesheets, :javascripts, :assigns, :queries]
 
 
 ## Creating your own notes
